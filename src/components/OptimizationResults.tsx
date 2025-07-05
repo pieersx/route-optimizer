@@ -1,15 +1,15 @@
+import { Award, BarChart3, MapPin, TrendingUp } from 'lucide-react';
 import React from 'react';
-import { TrendingUp, Award, Target, BarChart3, MapPin } from 'lucide-react';
-import { OptimizedRoute, Location } from '../types/route';
+import { Location, OptimizedRoute } from '../types/route';
 
 interface OptimizationResultsProps {
   optimizedRoute: OptimizedRoute | null;
   locations: Location[];
 }
 
-export const OptimizationResults: React.FC<OptimizationResultsProps> = ({ 
-  optimizedRoute, 
-  locations 
+export const OptimizationResults: React.FC<OptimizationResultsProps> = ({
+  optimizedRoute,
+  locations
 }) => {
   if (!optimizedRoute) {
     return (
@@ -45,26 +45,19 @@ export const OptimizationResults: React.FC<OptimizationResultsProps> = ({
           </div>
           <div className="text-sm text-gray-600">km totales</div>
         </div>
-        
+
         <div className="bg-green-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-green-600 mb-1">
             {Math.round(optimizedRoute.totalTime)}
           </div>
           <div className="text-sm text-gray-600">minutos</div>
         </div>
-        
+
         <div className="bg-orange-50 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold text-orange-600 mb-1">
             {deliveryCount}
           </div>
           <div className="text-sm text-gray-600">entregas</div>
-        </div>
-        
-        <div className="bg-purple-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-purple-600 mb-1">
-            {efficiencyScore}%
-          </div>
-          <div className="text-sm text-gray-600">eficiencia</div>
         </div>
       </div>
 
@@ -76,7 +69,7 @@ export const OptimizationResults: React.FC<OptimizationResultsProps> = ({
             <span className="font-medium text-green-800">Optimización con Google Maps</span>
           </div>
           <p className="text-sm text-gray-700">
-            La ruta ha sido optimizada usando Google Maps Directions API con waypoint optimization. 
+            La ruta ha sido optimizada usando Google Maps Directions API con waypoint optimization.
             Se considera el tráfico en tiempo real y las condiciones actuales de Lima.
           </p>
         </div>
@@ -135,7 +128,7 @@ function calculateEfficiencyScore(route: OptimizedRoute, deliveryCount: number):
   // Simple efficiency calculation based on distance per delivery
   const avgDistancePerDelivery = route.totalDistance / Math.max(1, deliveryCount);
   const maxExpectedDistance = 5; // km per delivery in Lima
-  
+
   const efficiency = Math.max(0, 100 - (avgDistancePerDelivery / maxExpectedDistance) * 50);
   return Math.round(efficiency);
 }
@@ -144,7 +137,7 @@ function calculateTimeEfficiency(route: OptimizedRoute): number {
   // Calculate time efficiency based on distance/time ratio
   const ratio = route.totalDistance / (route.totalTime / 60); // km per hour
   const expectedSpeed = 15; // Expected average speed in Lima (km/h)
-  
+
   const efficiency = Math.min(100, (ratio / expectedSpeed) * 100);
   return Math.round(efficiency);
 }
@@ -154,10 +147,10 @@ function calculateEstimatedSavings(route: OptimizedRoute, deliveryCount: number)
   const estimatedNonOptimizedDistance = route.totalDistance * 1.3; // 30% more distance
   const fuelPrice = 5.5; // S/. per liter
   const fuelConsumption = 0.12; // liters per km
-  
+
   const fuelSaved = (estimatedNonOptimizedDistance - route.totalDistance) * fuelConsumption;
   const timeSaved = (route.totalTime * 0.25); // 25% time savings
-  
+
   return {
     fuel: fuelSaved * fuelPrice,
     time: Math.round(timeSaved)

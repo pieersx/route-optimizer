@@ -1,7 +1,7 @@
+import { AlertCircle, CheckCircle, Clock, RefreshCw, Route, Table } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Table, Clock, Route, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
-import { Location, DistanceMatrix as DistanceMatrixType } from '../types/route';
 import { GoogleMapsService } from '../services/googleMapsService';
+import { DistanceMatrix as DistanceMatrixType, Location } from '../types/route';
 
 interface DistanceMatrixProps {
   locations: Location[];
@@ -58,9 +58,9 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
   const getLocationName = (id: string) => {
     const location = locations.find(l => l.id === id);
     if (!location) return 'Desconocido';
-    
+
     if (location.isBase) return 'BASE';
-    
+
     const index = locations.filter(l => !l.isBase).findIndex(l => l.id === id);
     return `P${index + 1}`;
   };
@@ -86,7 +86,7 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
             </div>
           )}
         </div>
-        
+
         {locations.length >= 2 && (
           <button
             onClick={handleRefreshMatrix}
@@ -203,7 +203,7 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
                       {locations.map(toLocation => {
                         const element = localMatrix[fromLocation.id]?.[toLocation.id];
                         const isOrigin = fromLocation.id === toLocation.id;
-                        
+
                         return (
                           <td key={toLocation.id} className={`border border-gray-300 p-3 text-center text-sm ${
                             isOrigin ? 'bg-gray-200' : ''
@@ -257,7 +257,7 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
                 Entre todas las ubicaciones
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
               <div className="flex items-center gap-3 mb-2">
                 <Clock className="w-6 h-6 text-green-600" />
@@ -270,7 +270,7 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
                 Considerando tráfico actual
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
               <div className="flex items-center gap-3 mb-2">
                 <Table className="w-6 h-6 text-orange-600" />
@@ -298,58 +298,13 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
             </div>
           </div>
 
-          {/* Traffic and Route Insights */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-200">
-              <h4 className="font-semibold text-indigo-800 mb-3 flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Análisis de Tráfico
-              </h4>
-              <div className="space-y-2 text-sm text-indigo-700">
-                <div className="flex justify-between">
-                  <span>Ruta más rápida:</span>
-                  <span className="font-medium">{getFastestRoute(localMatrix, locations)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Ruta más lenta:</span>
-                  <span className="font-medium">{getSlowestRoute(localMatrix, locations)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Diferencia máxima:</span>
-                  <span className="font-medium">{getMaxTimeDifference(localMatrix, locations)} min</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-              <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
-                <Route className="w-4 h-4" />
-                Optimización Sugerida
-              </h4>
-              <div className="space-y-2 text-sm text-green-700">
-                <div className="flex justify-between">
-                  <span>Ruta más corta:</span>
-                  <span className="font-medium">{getShortestRoute(localMatrix, locations)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Ruta más larga:</span>
-                  <span className="font-medium">{getLongestRoute(localMatrix, locations)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Ahorro potencial:</span>
-                  <span className="font-medium">{getMaxDistanceDifference(localMatrix, locations)} km</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Data Source Info */}
           <div className="mt-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
             <div className="flex items-center gap-2 text-gray-600 text-xs">
               <CheckCircle className="w-4 h-4 text-green-600" />
               <span>
-                Datos obtenidos de Google Maps Distance Matrix API • 
-                Incluye tráfico en tiempo real • 
+                Datos obtenidos de Google Maps Distance Matrix API •
+                Incluye tráfico en tiempo real •
                 Actualizado: {lastUpdated?.toLocaleString() || 'No disponible'}
               </span>
             </div>
@@ -364,7 +319,7 @@ export const DistanceMatrix: React.FC<DistanceMatrixProps> = ({ locations, dista
 function calculateAverageDistance(matrix: DistanceMatrixType, locations: Location[]): number {
   let total = 0;
   let count = 0;
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -376,14 +331,14 @@ function calculateAverageDistance(matrix: DistanceMatrixType, locations: Locatio
       }
     });
   });
-  
+
   return count > 0 ? total / count : 0;
 }
 
 function calculateAverageTime(matrix: DistanceMatrixType, locations: Location[]): number {
   let total = 0;
   let count = 0;
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -395,14 +350,14 @@ function calculateAverageTime(matrix: DistanceMatrixType, locations: Location[])
       }
     });
   });
-  
+
   return count > 0 ? total / count : 0;
 }
 
 function calculateAverageSpeed(matrix: DistanceMatrixType, locations: Location[]): number {
   let totalSpeed = 0;
   let count = 0;
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -418,14 +373,14 @@ function calculateAverageSpeed(matrix: DistanceMatrixType, locations: Location[]
       }
     });
   });
-  
+
   return count > 0 ? totalSpeed / count : 0;
 }
 
 function getFastestRoute(matrix: DistanceMatrixType, locations: Location[]): string {
   let minTime = Infinity;
   let fastestRoute = 'N/A';
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -439,14 +394,14 @@ function getFastestRoute(matrix: DistanceMatrixType, locations: Location[]): str
       }
     });
   });
-  
+
   return fastestRoute;
 }
 
 function getSlowestRoute(matrix: DistanceMatrixType, locations: Location[]): string {
   let maxTime = 0;
   let slowestRoute = 'N/A';
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -460,14 +415,14 @@ function getSlowestRoute(matrix: DistanceMatrixType, locations: Location[]): str
       }
     });
   });
-  
+
   return slowestRoute;
 }
 
 function getMaxTimeDifference(matrix: DistanceMatrixType, locations: Location[]): number {
   let minTime = Infinity;
   let maxTime = 0;
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -479,14 +434,14 @@ function getMaxTimeDifference(matrix: DistanceMatrixType, locations: Location[])
       }
     });
   });
-  
+
   return minTime !== Infinity ? Math.round((maxTime - minTime) / 60) : 0;
 }
 
 function getShortestRoute(matrix: DistanceMatrixType, locations: Location[]): string {
   let minDistance = Infinity;
   let shortestRoute = 'N/A';
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -500,14 +455,14 @@ function getShortestRoute(matrix: DistanceMatrixType, locations: Location[]): st
       }
     });
   });
-  
+
   return shortestRoute;
 }
 
 function getLongestRoute(matrix: DistanceMatrixType, locations: Location[]): string {
   let maxDistance = 0;
   let longestRoute = 'N/A';
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -521,14 +476,14 @@ function getLongestRoute(matrix: DistanceMatrixType, locations: Location[]): str
       }
     });
   });
-  
+
   return longestRoute;
 }
 
 function getMaxDistanceDifference(matrix: DistanceMatrixType, locations: Location[]): number {
   let minDistance = Infinity;
   let maxDistance = 0;
-  
+
   locations.forEach(from => {
     locations.forEach(to => {
       if (from.id !== to.id) {
@@ -540,6 +495,6 @@ function getMaxDistanceDifference(matrix: DistanceMatrixType, locations: Locatio
       }
     });
   });
-  
+
   return minDistance !== Infinity ? Math.round((maxDistance - minDistance) / 1000 * 10) / 10 : 0;
 }
